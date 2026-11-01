@@ -15,8 +15,13 @@
 | [docmost-stack](https://github.com/DemonIngvi/docmost-stack) | Публичный | Запуск Docmost |
 | [documentation_docmost](https://github.com/DemonIngvi/documentation_docmost) | Публичный | Пример: проект «Вектор» |
 | [agent-tasktracker-max](https://github.com/DemonIngvi/agent-tasktracker-max) | Публичный | Рабочий проект: агентная платформа, перенесённая из `agent-architecture` |
-| rnd-helper | Приватный | Помощник человека в R&D, каркас |
-| sdd-helper | Приватный | Помощник человека в требованиях, каркас |
+| doc-guide | Приватный | Движок пробелов и сервер MCP для LibreChat |
+| rnd-helper | Приватный | Шаги этапа анализа |
+| sdd-helper | Приватный | Шаги требований, эпиков и историй |
+| ux-helper | Приватный | Шаги интерфейса |
+| architecture-helper | Приватный | Шаги решений и модели системы |
+| delivery-helper | Приватный | Шаги реализации |
+| doc-helpers-docs | Приватный | Документация этих модулей |
 
 Каждый репозиторий меняется и выпускает версии независимо.
 
