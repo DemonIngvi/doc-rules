@@ -1,0 +1,97 @@
+G01:
+  target: _bmad-output/implementation-artifacts/1-1-project-team-и-role.md
+  seeds:
+  - id: D1
+    kind: Противоречит решению AD-7 и PRD
+    file: _bmad-output/implementation-artifacts/1-1-project-team-и-role.md
+    old: '| S5 Observer меняет | Role Observer | Изменение отклонено | 403 |'
+    new: '| S5 Observer меняет | Role Observer | Изменение отклонено | 404 |'
+    hit: 'Observer[^|]*\|[^|]*\|[^|]*\|\s*404|Observer.{0,120}404|404.{0,120}Observer'
+  - id: D2
+    kind: Результат нельзя проверить
+    file: _bmad-output/implementation-artifacts/1-1-project-team-и-role.md
+    old: '| S3 Нет Process | Запрос без Process | Project не создан | 422 с причиной |'
+    new: '| S3 Нет Process | Запрос без Process | Project не создан | Подходящая ошибка |'
+    hit: 'Подходящая ошибка'
+  - id: D3
+    kind: Термин вне Глоссария
+    file: _bmad-output/implementation-artifacts/1-1-project-team-и-role.md
+    old: '| S5 Нет Role |'
+    new: "| S5 Contributor меняет | Role Contributor | Изменение принято | N/A |\n| S5 Нет Role |"
+    hit: 'Contributor'
+  - id: D4
+    kind: Не задано значение
+    file: _bmad-output/implementation-artifacts/1-1-project-team-и-role.md
+    old: '**Always:** Каждый запрос'
+    new: '**Always:** Project архивируется после срока неактивности. Каждый запрос'
+    hit: 'неактивн'
+  - id: D5
+    kind: Технологии нет в стеке
+    file: _bmad-output/implementation-artifacts/1-1-project-team-и-role.md
+    old: '-- REST и БД -- FR-1, FR-2'
+    new: '-- REST, сессии хранить в MongoDB -- FR-1, FR-2'
+    hit: 'MongoDB'
+  - id: D6
+    kind: Запрещённая зависимость модулей
+    file: _bmad-output/implementation-artifacts/1-1-project-team-и-role.md
+    old: '-- Project, Team, Role, `ProjectScope`'
+    new: '-- Project, Team, Role, `ProjectScope`; при удалении Role вызывает модуль `work` напрямую, чтобы снять назначения'
+    hit: 'напрямую|access\s*(->|→)\s*work'
+G08:
+  seeds:
+  - id: E1
+    kind: Нет измеримого времени
+    file: _bmad-output/planning-artifacts/epics.md
+    old: 'другие пользователи видят его без перезагрузки'
+    new: 'другие пользователи видят его в приемлемое время'
+    hit: 'приемлем'
+  - id: E2
+    kind: Нет ожидаемого результата
+    file: _bmad-output/planning-artifacts/epics.md
+    old: '**Then** назначение отклоняется'
+    new: '**Then** система реагирует соответствующим образом'
+    hit: 'соответствующим образом'
+  - id: E3
+    kind: Нет числа
+    file: _bmad-output/planning-artifacts/epics.md
+    old: '**Then** выполняется не менее трёх повторов'
+    new: '**Then** выполняется разумное число повторов'
+    hit: 'разумное'
+  - id: E4
+    kind: Нет числа
+    file: _bmad-output/planning-artifacts/epics.md
+    old: 'показано до пяти элементов, доступных пользователю'
+    new: 'показано оптимальное число элементов, доступных пользователю'
+    hit: 'оптимальн'
+  - id: E5
+    kind: Нет правила выбора
+    file: _bmad-output/planning-artifacts/epics.md
+    old: '**Then** действует первое, цвет дублируется значком'
+    new: '**Then** действует подходящее, цвет дублируется значком'
+    hit: 'действует подходящее'
+G11:
+  seeds:
+  - id: P1
+    kind: Эпики расходятся с UX
+    file: _bmad-output/planning-artifacts/epics.md
+    old: '**When** прошло меньше 30 секунд'
+    new: '**When** прошло меньше 5 минут'
+    hit: '5 минут'
+  - id: P2
+    kind: Spine расходится с PRD
+    file: _bmad-output/planning-artifacts/architecture/architecture-bmad-example-2026-11-01/ARCHITECTURE-SPINE.md
+    old: 'Чужой Project даёт 404, нехватка Role даёт 403'
+    new: 'Чужой Project даёт 403, нехватка Role даёт 403'
+    hit: 'Чужой Project даёт 403'
+  - id: P3
+    kind: Потеряно требование PRD
+    file: _bmad-output/planning-artifacts/epics.md
+    old: '**Then** отправляется подписанный запрос'
+    new: '**Then** отправляется запрос'
+    hit: 'отправляется запрос|подпис'
+  - id: P4
+    kind: Эпики нарушают NFR-3
+    file: _bmad-output/planning-artifacts/epics.md
+    old: '**Then** сетевой обмен идёт только с указанным адресом'
+    new: '**Then** запрос идёт через облачный шлюз Вектора'
+    hit: 'шлюз'
