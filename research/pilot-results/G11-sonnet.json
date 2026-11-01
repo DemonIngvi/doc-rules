@@ -1,0 +1,9 @@
+{
+  "gate": "G11",
+  "model": "sonnet",
+  "fresh_input": 16910,
+  "cache_read": 0,
+  "output": 3930,
+  "total": 20840,
+  "cost_usd": 0.1086719
+}

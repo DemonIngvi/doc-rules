@@ -1,0 +1,9 @@
+{
+  "gate": "G02",
+  "model": "haiku",
+  "fresh_input": 4609,
+  "cache_read": 0,
+  "output": 2384,
+  "total": 6993,
+  "cost_usd": 0.0026150999999999995
+}

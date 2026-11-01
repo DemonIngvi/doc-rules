@@ -1,0 +1,9 @@
+{
+  "gate": "G11",
+  "model": "haiku",
+  "fresh_input": 16935,
+  "cache_read": 0,
+  "output": 14967,
+  "total": 31902,
+  "cost_usd": 0.0128042
+}

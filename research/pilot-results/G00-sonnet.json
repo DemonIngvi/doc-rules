@@ -1,0 +1,9 @@
+{
+  "gate": "G00",
+  "model": "sonnet",
+  "fresh_input": 860,
+  "cache_read": 0,
+  "output": 6,
+  "total": 866,
+  "cost_usd": 0.0037026
+}
