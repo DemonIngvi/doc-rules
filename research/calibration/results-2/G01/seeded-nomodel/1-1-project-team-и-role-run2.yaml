@@ -1,0 +1,73 @@
+gate: G01
+target: 1-1-project-team-и-role
+input_hash: 1ba622855c7a156c4195b6a8ea986ae1de4cd20f09030b4aa3d6061cd54df092
+run_by: run_gate.py sonnet
+author: unknown
+verdict: fail
+tokens: 7769
+estimate: 5500
+cost_usd: 0.028301499999999997
+not_checked: Один запуск не доказывает полноту, разные запуски находят разное
+findings:
+- level: blocker
+  quote: Project считается чужим, данные скрыты
+  problem: Строка S5 требует 403, а FR-2 и AD-7 говорят, что чужой Project (без Role)
+    даёт 404, а 403 только при нехватке Role. Ожидаемый код для пользователя без Role
+    неясен, тест написать нельзя.
+  decision: pending
+  decided_by: pending
+- level: blocker
+  quote: Administrator, Process выбран
+  problem: 'Role выдаётся в конкретном Project, а нового Project ещё нет. Не определено,
+    кто вправе создавать Project: глобальный администратор или Administrator другого
+    Project. Не сказано, какая Role и в каком Project у первого Administrator из ADMIN_EMAIL.
+    Без этого нельзя подготовить данные для S1 и первого входа.'
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: Имя Project уникально внутри Program, регистр не учитывается. Повтор имени
+    даёт 409.
+  problem: В матрице нет строки на 409, не задан `code` ошибки. Не определена уникальность
+    для Project без Program (`program_id` необязателен). Не сказано, как сравнивать
+    регистр для кириллицы и как считать архивные Project.
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: '`name` от 1 до 100 символов'
+  problem: Нет строк для пустого имени, имени длиной 101 и пробельного имени. Нет
+    кода ошибки и правила обрезки пробелов. Не описан случай несуществующего `program_id`.
+    S4 помечен неприменимым, хотя лимит длины имени есть.
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: до неё берётся Process по умолчанию из миграции
+  problem: Состав, имя и идентификатор Process по умолчанию не заданы, поэтому нельзя
+    подготовить данные для e2e-теста. Не описано, что делать, если миграция не создала
+    Process.
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: Сессия живёт 12 часов. Отключённый пользователь теряет сессии и токены сразу.
+  problem: В матрице нет строк для 401 при неверном пароле или токене, истечения сессии
+    через 12 часов, отключения пользователя и одноразового показа токена. Не заданы
+    эндпоинты входа и выпуска токена, формат токена и способ управлять временем в
+    тесте. Не определено, продлевается ли сессия при активности.
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: Первый Administrator создаётся при запуске из переменных `ADMIN_EMAIL` и
+    `ADMIN_PASSWORD`, если пользователей ещё нет.
+  problem: 'Не определено поведение, если переменные не заданы или невалидны (формат
+    почты, длина пароля). Не определено, что происходит при перезапуске, когда пользователи
+    уже есть: игнор или ошибка. Не задана парольная политика.'
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: Administrator задаёт Team и Role пользователя
+  problem: Не определены поля Team, уникальность её имени и состав участников. Не
+    определено, сколько Role у пользователя в одном Project и как Role меняется или
+    снимается. Нет строк для отказа Developer, Product Owner и Observer на изменение
+    Role (403), для несуществующего пользователя и для Role, выданной себе самому.
+  decision: pending
+  decided_by: pending
+dropped_without_quote: []

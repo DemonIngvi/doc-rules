@@ -1,0 +1,76 @@
+gate: G01
+target: 1-1-project-team-и-role
+input_hash: 1ba622855c7a156c4195b6a8ea986ae1de4cd20f09030b4aa3d6061cd54df092
+run_by: run_gate.py sonnet
+author: unknown
+verdict: concerns
+tokens: 6516
+estimate: 5500
+cost_usd: 0.0338897
+not_checked: Один запуск не доказывает полноту, разные запуски находят разное
+findings:
+- level: blocker
+  quote: '| S5 Нет Role | Пользователь без Role в Project читает `GET /projects/{id}`
+    | Project считается чужим, данные скрыты | 403 |'
+  problem: 'Строка матрицы противоречит FR-2 и AD-7: чужой Project (нет Role) должен
+    давать 404, а 403 — это нехватка прав при наличии Role. Ожидаемый код в тесте
+    неоднозначен, разработчик должен сам выбрать 404 или 403.'
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: Имя Project уникально внутри Program, регистр не учитывается. Повтор имени
+    даёт 409.
+  problem: 'В матрице нет строки для 409 и нет code ошибки. Не определено, как проверяется
+    уникальность для Project без Program (`program_id` необязателен): глобально или
+    не проверяется. Автотест не написать без догадок.'
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: '`name` от 1 до 100 символов'
+  problem: Нет строки матрицы и кода ошибки для имени вне диапазона (пусто, 101 символ).
+    Не определено, считаются ли пробелы по краям, какой статус и code возвращаются.
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: '| S1 Первый вход | Заданы `ADMIN_EMAIL`, `ADMIN_PASSWORD`, пользователей
+    нет | Administrator создан и вошёл | N/A |'
+  problem: Не определено поведение, когда переменные не заданы или пустые при отсутствии
+    пользователей, а также при невалидном email или слабом пароле. Нет требований
+    к пароля и формату. Не указан способ создания Role Administrator, так как Role
+    выдаётся в Project, а Project ещё нет.
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: Неверный пароль или токен даёт 401, ответ не показывает, что именно неверно.
+  problem: Нет строк матрицы для 401, сессии 12 часов (скользящая или фиксированная,
+    поведение по истечении) и отключённого пользователя. Нет формата code и способа
+    управлять временем в тесте. Не определено, как токен передаётся (заголовок, схема),
+    срок жизни токена и права токена.
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: Архивный Project скрыт из View, но его Work Item доступны по прямой ссылке.
+  problem: 'Архивирование входит в FR-1, но нет эндпоинта, строки матрицы и правил:
+    кто может архивировать, можно ли разархивировать, что с изменением Work Item в
+    архивном Project. S11 говорит только об удалении.'
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: '| S1 Создание Team и назначение Role | Administrator задаёт Team и Role
+    пользователя | Role действует со следующего запроса | N/A |'
+  problem: 'Не определены формы запросов и эндпоинты Team и Role, правила повторного
+    назначения или смены Role, несколько Role у одного пользователя в Project, отзыв
+    Role, а также что происходит с несуществующим пользователем или Project. Нет ошибок
+    для проверки прав: кто, кроме Administrator, получает 403.'
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: 'Process для теста создаётся заранее: список Process заполняет история 1.3,
+    до неё берётся Process по умолчанию из миграции.'
+  problem: Не указано, что представляет Process по умолчанию из миграции (идентификатор,
+    имя, содержимое), поэтому в тестах нельзя на него сослаться. Не определено, какая
+    Role и права создателя Project в новом Project, и кто видит список Project (`GET
+    /projects`).
+  decision: pending
+  decided_by: pending
+dropped_without_quote: []

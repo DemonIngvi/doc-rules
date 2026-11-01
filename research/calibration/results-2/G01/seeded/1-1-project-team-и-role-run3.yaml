@@ -1,0 +1,73 @@
+gate: G01
+target: 1-1-project-team-и-role
+input_hash: 9e1ed469685cc6f3f381b2e84b307a4b8308eb2999dd3ff7692f1d5497f31166
+run_by: run_gate.py sonnet
+author: unknown
+verdict: fail
+tokens: 8705
+estimate: 5500
+cost_usd: 0.030556600000000003
+not_checked: Один запуск не доказывает полноту, разные запуски находят разное
+findings:
+- level: blocker
+  quote: Project считается чужим, данные скрыты
+  problem: Строка S5 даёт для пользователя без Role код 403. FR-2 и AD-7 говорят,
+    что чужой Project (без Role) даёт 404, а 403 только при нехватке Role. Пакет противоречит
+    сам себе, поэтому автотест не может проверить ожидаемый код ответа.
+  decision: pending
+  decided_by: pending
+- level: blocker
+  quote: Administrator, Process выбран
+  problem: 'Role выдаётся в конкретном Project, а Project для создания ещё не существует.
+    Пакет не говорит, кто считается Administrator при создании: глобальный флаг, Role
+    в другом Project или создатель. Не определено и то, получает ли создатель Role
+    в новом Project. Тестовые данные и права на `POST /projects` придётся придумывать.'
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: Повтор имени даёт 409.
+  problem: В матрице нет строки на конфликт имён. Не заданы `code` ошибки по RFC 9457
+    и порядок проверки регистра. Не определено, что считать уникальным для Project
+    без `program_id`, где нет Program для сравнения.
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: '`name` от 1 до 100 символов'
+  problem: Нет строки матрицы для пустого имени, имени длиной 101 символ и имени из
+    одних пробелов. Не заданы статус, `code` и правило обрезки пробелов. Строка S4
+    помечена «не применимо», хотя у поля есть числовой лимит.
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: Сессия живёт 12 часов.
+  problem: 'Нет строк матрицы для истечения сессии, ответа 401, отключения пользователя
+    и одноразового показа токена. Неясно, срок сессии считается от входа или скользящий.
+    Не задан срок жизни API-токена и способ управлять временем в тесте. Вход и выпуск
+    токена не описаны контрактом: нет путей, тел запросов и ответов.'
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: до неё берётся Process по умолчанию из миграции
+  problem: 'Не указано, какой именно Process создаёт миграция: идентификатор, имя,
+    состав. Тест не может сослаться на эти данные без догадок. Пакет не говорит и
+    о том, что делать в сценарии «Несуществующий Process» с `process_id` неверного
+    формата.'
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: Заданы `ADMIN_EMAIL`, `ADMIN_PASSWORD`, пользователей нет
+  problem: 'Не описано поведение при пустой или отсутствующей переменной, при неверном
+    формате почты или слабом пароле, и когда пользователи уже есть. Не определено,
+    как Administrator «вошёл» при запуске: через сессию или иначе. Правил пароля в
+    пакете нет.'
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: Administrator может создавать, архивировать и группировать Project в Program.
+  problem: Архивирование и группировка в Program входят в FR-1, но в матрице случаев,
+    задачах и Code Map нет ни строки, ни конечной точки. Нет и правила для `archived_at`,
+    видимости архивного Project и доступа к его Work Item. Не определено, кто создаёт
+    Program.
+  decision: pending
+  decided_by: pending
+dropped_without_quote: []

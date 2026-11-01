@@ -1,0 +1,82 @@
+gate: G01
+target: 1-1-project-team-и-role
+input_hash: 8ba7ac722792e00be0eeec6e20a91013b88dc8614916ed67a25374416497f03a
+run_by: run_gate.py sonnet
+author: unknown
+verdict: concerns
+tokens: 7643
+estimate: 5500
+cost_usd: 0.0181458
+not_checked: Один запуск не доказывает полноту, разные запуски находят разное
+findings:
+- level: minor
+  quote: Имя Project уникально внутри Program, регистр не учитывается. Повтор имени
+    даёт 409.
+  problem: 'Program необязателен (`program_id` опциональна), но не определено, как
+    проверяется уникальность имени у Project без Program: глобально, внутри «без Program»
+    или не проверяется. Тест дубля для такого случая написать нельзя без догадки.'
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: '| S3, S7, S8 Дубль имени | Имя занято в Program, в том числе параллельным
+    запросом | Project не создан | 409, code `project_name_taken` |'
+  problem: 'Для параллельных запросов не указан ожидаемый результат: какой из двух
+    создаётся и какой получает 409, и каким механизмом (уникальный индекс, блокировка)
+    это обеспечивается. Не определено, считаются ли пробелы по краям и юникодный регистр
+    одинаковыми. Тест на гонку без этого не написать.'
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: 'Поля Project: `name` от 1 до 100 символов, `process_id`, `program_id` необязателен.'
+  problem: 'В матрице нет строки для имени короче 1 или длиннее 100 символов: неизвестны
+    код ошибки, статус (422?) и считается ли имя из пробелов пустым. Неясно, что делать
+    с несуществующим `program_id`.'
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: '| S1 Первый вход | Заданы `ADMIN_EMAIL`, `ADMIN_PASSWORD`, пользователей
+    нет | Administrator создан и вошёл | N/A |'
+  problem: 'Не описано поведение при заданных переменных, когда пользователи уже есть
+    (не создавать, не менять пароль), и при отсутствии или невалидности переменных
+    на пустой базе (падение запуска или тихий пропуск). Не заданы требования к сложности
+    пароля. Role Administrator в каком Project создаётся первому Administrator, не
+    сказано: Role привязана к Project, а Project ещё нет.'
+  decision: pending
+  decided_by: pending
+- level: blocker
+  quote: '| S1 Создание Team и назначение Role | Administrator задаёт Team и Role
+    пользователя | Role действует со следующего запроса | N/A |'
+  problem: 'Не определены API и состав данных Team (членство пользователей, у Team
+    только `name`), нет ошибок для несуществующего пользователя, Project, повторного
+    назначения Role (замена или 409), снятия Role и недопустимого названия Role. Не
+    сказано, чьим Administrator-ом нужно быть: Role Administrator есть в конкретном
+    Project, а Project и Team не привязаны. Тест нельзя написать без догадок.'
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: '| S5 Нет Role | Пользователь без Role в Project читает `GET /projects/{id}`
+    | Project считается чужим, данные скрыты | 404 |'
+  problem: 'Не определено, как создание Project работает с правами: кто может вызвать
+    `POST /projects` (Administrator в каком Project, если Project ещё нет), и кто
+    получает Role в новом Project (создатель?). Без этого S1 создания Project не тестируется.'
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: '| S10 Отключённый пользователь | Сессия или токен отключённого пользователя
+    | Запрос отклонён | 401, code `invalid_credentials` |'
+  problem: Нет строк для истёкшей сессии (12 часов; как проверять время, нужны управляемые
+    часы), отозванного токена (`revoked_at`), выпуска токена и показа один раз, срока
+    жизни токена. Для токена с невалидным значением код ошибки задан, но для истёкшей
+    сессии не оговорён. Нет ограничений на повторные неверные попытки входа.
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: '- Given чистый сервер, when выполнен `docker compose up`, then приложение
+    открывается и Administrator может войти.'
+  problem: Не определено, что значит «приложение открывается» (URL, порт, health-проверка,
+    ожидаемый ответ) и где задаются `ADMIN_EMAIL`/`ADMIN_PASSWORD` для compose (.env,
+    пример). Состав служб не указан кроме списка стека. Автотест на этот критерий
+    не написать без догадок.
+  decision: pending
+  decided_by: pending
+dropped_without_quote: []

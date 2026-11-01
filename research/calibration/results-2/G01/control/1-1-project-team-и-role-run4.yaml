@@ -1,0 +1,79 @@
+gate: G01
+target: 1-1-project-team-и-role
+input_hash: 8ba7ac722792e00be0eeec6e20a91013b88dc8614916ed67a25374416497f03a
+run_by: run_gate.py sonnet
+author: unknown
+verdict: fail
+tokens: 8605
+estimate: 5500
+cost_usd: 0.0277693
+not_checked: Один запуск не доказывает полноту, разные запуски находят разное
+findings:
+- level: blocker
+  quote: '| S1 Первый вход | Заданы `ADMIN_EMAIL`, `ADMIN_PASSWORD`, пользователей
+    нет | Administrator создан и вошёл | N/A |'
+  problem: 'Role выдаётся только в Project (`Role(user_id, project_id)`), а при первом
+    запуске Project нет. Пакет не говорит, как первый Administrator получает право
+    создавать Project: глобальный флаг или Role в каком-то Project. Не сказано и то,
+    получает ли создатель Project Role Administrator в нём. Без этого нельзя написать
+    тесты S1 и проверку Role.'
+  decision: pending
+  decided_by: pending
+- level: blocker
+  quote: '| S3, S7, S8 Дубль имени | Имя занято в Program, в том числе параллельным
+    запросом | Project не создан | 409, code `project_name_taken` |'
+  problem: '`program_id` необязателен, а уникальность определена только «внутри Program».
+    Для Project без Program правило не задано: имя может быть уникально глобально,
+    повторяться или сравниваться только среди Project без Program. Для параллельного
+    запроса не сказано, какой из двух запросов выигрывает. Тест можно написать только
+    предположив, что ожидается ровно один успех и один 409.'
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: 'Поля Project: `name` от 1 до 100 символов, `process_id`, `program_id` необязателен.'
+  problem: В матрице нет строки для имени вне диапазона (пустое, 101 символ, одни
+    пробелы). Не заданы статус и `code` ошибки, не сказано, обрезаются ли пробелы.
+    Не указано, как регистронезависимость сравнивается с Unicode (например, кириллица).
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: до неё берётся Process по умолчанию из миграции.
+  problem: 'Не определены идентификатор и имя Process по умолчанию. Тест не может
+    сослаться на эту запись, не зная её id. Также не сказано, как «заранее создаётся»
+    Process для теста: фикстура, сид или миграция.'
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: Administrator может создавать Team и назначать пользователю Role в Project.
+  problem: 'Для Team есть только `name`. Не определены добавление и удаление участников,
+    API и ошибки (дубль имени Team, несуществующий пользователь или Project). Строка
+    матрицы покрывает только назначение Role. Не сказано, что происходит при повторном
+    назначении Role пользователю, у которого она уже есть: замена или вторая Role.'
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: Administrator может создавать, архивировать и группировать Project в Program.
+  problem: Архивирование и группировка заявлены в истории, но ни в матрице, ни в критериях
+    нет сценариев и ожидаемых результатов. Не определены создание Program, права на
+    архивацию и поведение архивного Project при записи в него. Также не сказано, можно
+    ли вернуть Project из архива и занимает ли архивный Project имя в Program.
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: Сессия живёт 12 часов.
+  problem: 'Не сказано, абсолютный ли это срок или он продлевается при активности.
+    Не определено и то, как тест проверяет истечение: подмена часов или TTL в Redis.
+    Для API-токена срок жизни, формат и порядок отзыва не заданы вовсе, хотя в модели
+    есть `revoked_at`.'
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: Первый Administrator создаётся при запуске из переменных `ADMIN_EMAIL` и
+    `ADMIN_PASSWORD`, если пользователей ещё нет.
+  problem: Не определено поведение при незаданных или пустых переменных, невалидной
+    почте или слабом пароле. Нет правил пароля для создаваемых пользователей. Нет
+    строки матрицы для входа с несуществующей почтой, хотя ответ не должен отличаться
+    от ответа на неверный пароль.
+  decision: pending
+  decided_by: pending
+dropped_without_quote: []

@@ -1,0 +1,76 @@
+gate: G01
+target: 1-1-project-team-и-role
+input_hash: 9e1ed469685cc6f3f381b2e84b307a4b8308eb2999dd3ff7692f1d5497f31166
+run_by: run_gate.py sonnet
+author: unknown
+verdict: fail
+tokens: 7192
+estimate: 5500
+cost_usd: 0.015581600000000001
+not_checked: Один запуск не доказывает полноту, разные запуски находят разное
+findings:
+- level: blocker
+  quote: '| S5 Нет Role | Пользователь без Role в Project читает `GET /projects/{id}`
+    | Project считается чужим, данные скрыты | 403 |'
+  problem: 'Строка матрицы противоречит FR-2 и AD-7: чужой Project (нет Role) даёт
+    404, а 403 только при нехватке Role. Ожидаемый код для автотеста неоднозначен
+    (404 или 403), разработчик должен выбрать сам.'
+  decision: pending
+  decided_by: pending
+- level: blocker
+  quote: '| S1 Создание Project | Administrator, Process выбран | Project создан |
+    N/A |'
+  problem: 'Не указаны входные данные и результат: поля запроса, код успешного ответа
+    (201/200), форма тела ответа, начальное состояние Project, кто становится владельцем
+    и получает ли создатель Role в новом Project. Без этого тест не написать.'
+  decision: pending
+  decided_by: pending
+- level: blocker
+  quote: Имя Project уникально внутри Program, регистр не учитывается. Повтор имени
+    даёт 409.
+  problem: 'В матрице нет строки на 409. Не определены: уникальность для Project без
+    program_id (`program_id` необязателен), code ошибки, что считать регистром для
+    кириллицы/нормализации и пробелов, учитываются ли архивные Project.'
+  decision: pending
+  decided_by: pending
+- level: blocker
+  quote: Administrator может создавать, архивировать и группировать Project в Program.
+  problem: 'Нет API и поведения для архивирования, создания Program и перемещения
+    Project между Program: маршруты, права, коды, состояния. Строк матрицы и критериев
+    нет, хотя Code Map и FR требуют. Также неясно, какая Role (в Project или глобальная)
+    нужна для создания Project, которого ещё нет и в котором Role не может быть.'
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: 'Process для теста создаётся заранее: список Process заполняет история 1.3,
+    до неё берётся Process по умолчанию из миграции.'
+  problem: 'Не определено содержимое «Process по умолчанию из миграции»: имя, фиксированный
+    id, формат данных. Тест не может сослаться на него без догадок.'
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: Role действует со следующего запроса
+  problem: Не заданы API назначения Role и создания Team (маршруты, тело, коды), нет
+    проверки прав на смену Role, поведения при повторном назначении, снятии Role и
+    последнем Administrator. Кроме того, у Team нет атрибутов членства (в модели только
+    name), как пользователь входит в Team, не определено.
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: Сессия живёт 12 часов. Отключённый пользователь теряет сессии и токены сразу.
+  problem: Нет строк матрицы и критериев на вход, 401, истечение сессии (управление
+    временем в тесте), отключение пользователя, выпуск токена и показ один раз. Не
+    указаны API входа, формат токена, правила пароля, скользящее или фиксированное
+    окно сессии.
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: '| S1 Первый вход | Заданы `ADMIN_EMAIL`, `ADMIN_PASSWORD`, пользователей
+    нет | Administrator создан и вошёл | N/A |'
+  problem: 'Не определено: «вошёл» при запуске — как именно (сессия без запроса?),
+    поведение при пустых/невалидных переменных или когда пользователи уже есть, в
+    каком Project получает Role Administrator, если Project ещё нет (глобальная или
+    проектная Role).'
+  decision: pending
+  decided_by: pending
+dropped_without_quote: []

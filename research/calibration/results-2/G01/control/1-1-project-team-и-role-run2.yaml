@@ -1,0 +1,79 @@
+gate: G01
+target: 1-1-project-team-и-role
+input_hash: 8ba7ac722792e00be0eeec6e20a91013b88dc8614916ed67a25374416497f03a
+run_by: run_gate.py sonnet
+author: unknown
+verdict: concerns
+tokens: 7446
+estimate: 5500
+cost_usd: 0.0161378
+not_checked: Один запуск не доказывает полноту, разные запуски находят разное
+findings:
+- level: minor
+  quote: Имя Project уникально внутри Program, регистр не учитывается. Повтор имени
+    даёт 409.
+  problem: 'Не определено, как проверяется уникальность для Project без program_id
+    (необязателен): уникально глобально, среди всех без Program или не проверяется.
+    Автотест дубля для Project без Program написать нельзя без догадки. Также не сказано,
+    учитываются ли архивные Project и обрезаются ли пробелы.'
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: Имя занято в Program, в том числе параллельным запросом
+  problem: Не указан механизм и ожидаемый результат при гонке (уникальный индекс по
+    lower(name)+program_id, какой из двух запросов получит 409). Тест параллельности
+    требует решения, как его воспроизводить и что считать успехом.
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: '| S3 Несуществующий Process | `process_id` не найден | Project не создан
+    | 422, code `process_not_found` |'
+  problem: 'Нет строк для невалидных `name` (пустое, больше 100 символов, только пробелы)
+    и для несуществующего `program_id`: код ошибки и статус не заданы, хотя ограничение
+    1–100 в Boundaries есть.'
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: 'Process для теста создаётся заранее: список Process заполняет история 1.3,
+    до неё берётся Process по умолчанию из миграции.'
+  problem: Не указано, что за Process по умолчанию (имя, фиксированный id), поэтому
+    тест не может обратиться к нему без догадки о данных.
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: '| S1 Создание Team и назначение Role | Administrator задаёт Team и Role
+    пользователя | Role действует со следующего запроса | N/A |'
+  problem: 'Нет конкретных входов и выходов: эндпоинты, тело запроса, коды ответа,
+    что происходит при повторном назначении Role (замена или вторая Role), при несуществующем
+    пользователе/Project, и у пользователя одна Role в Project или несколько. Не сказано,
+    какой Role может назначать Role (только Administrator этого Project?), и что отвечает
+    не-Administrator.'
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: '| S1 Первый вход | Заданы `ADMIN_EMAIL`, `ADMIN_PASSWORD`, пользователей
+    нет | Administrator создан и вошёл | N/A |'
+  problem: 'Не определено поведение при незаданных переменных или пустых значениях
+    при отсутствии пользователей, и что значит «вошёл» при запуске (сессия создаётся
+    при старте невозможна). Также Administrator в каком Project: Role привязана к
+    Project, а при первом запуске Project нет.'
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: '| S10 Отключённый пользователь | Сессия или токен отключённого пользователя
+    | Запрос отклонён | 401, code `invalid_credentials` |'
+  problem: 'Нет эндпоинтов и формата входа и выпуска токена (путь логина, передача
+    токена в заголовке, ответ с токеном), а также нет проверки истечения сессии через
+    12 часов: как в тесте управлять временем (подмена часов или TTL в Redis).'
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: '| S5 Observer меняет | Role Observer меняет Project | Изменение отклонено
+    | 403 |'
+  problem: Матрица прав FR-2 не говорит, кто может создавать, архивировать и менять
+    Project (в таблице нет столбца для Project). Не определено, может ли Product Owner
+    или Developer изменить Project, и какой Role нужна для создания Project, если
+    Role выдаётся в уже существующем Project.
+  decision: pending
+  decided_by: pending
+dropped_without_quote: []

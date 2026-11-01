@@ -1,0 +1,78 @@
+gate: G01
+target: 1-1-project-team-и-role
+input_hash: 8ba7ac722792e00be0eeec6e20a91013b88dc8614916ed67a25374416497f03a
+run_by: run_gate.py sonnet
+author: unknown
+verdict: concerns
+tokens: 7441
+estimate: 5500
+cost_usd: 0.016135800000000002
+not_checked: Один запуск не доказывает полноту, разные запуски находят разное
+findings:
+- level: blocker
+  quote: 'Process для теста создаётся заранее: список Process заполняет история 1.3,
+    до неё берётся Process по умолчанию из миграции.'
+  problem: Не определено, какой именно Process по умолчанию создаёт миграция (id,
+    имя), и нет решения, как тест получает его id. Автотест S1 нельзя написать без
+    догадок о данных.
+  decision: pending
+  decided_by: pending
+- level: blocker
+  quote: '| S1 Создание Project | Administrator, Process выбран | Project создан |
+    N/A |'
+  problem: 'Ожидаемый результат не конкретен: нет кода ответа (201?), состава тела,
+    начального состояния (active), и не сказано, получает ли создатель Role в новом
+    Project. Не задан Program во входных данных для проверки.'
+  decision: pending
+  decided_by: pending
+- level: blocker
+  quote: '| S3, S7, S8 Дубль имени | Имя занято в Program, в том числе параллельным
+    запросом | Project не создан | 409, code `project_name_taken` |'
+  problem: 'Не определено поведение для Project без program_id (необязателен): уникально
+    ли имя глобально, среди всех без Program, или проверки нет. Механизм гарантии
+    при параллельных запросах (уникальный индекс по lower(name)) не задан, как и ожидаемый
+    исход гонки: один 201 и один 409.'
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: '| S1 Создание Team и назначение Role | Administrator задаёт Team и Role
+    пользователя | Role действует со следующего запроса | N/A |'
+  problem: 'Нет полей Team, нет API и кодов ответов, нет ошибок: несуществующий пользователь
+    или Project, повторное назначение Role (замена или 409), снятие Role, допустимость
+    Role не из списка. Не проверяема строка про «следующий запрос» без данных.'
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: '| S5 Нет Role | Пользователь без Role в Project читает `GET /projects/{id}`
+    | Project считается чужим, данные скрыты | 404 |'
+  problem: 'Не сказано, что возвращается для несуществующего project_id (тоже 404?)
+    и как запрос без Role отличается от несуществующего. Также не определено, кто
+    видит Project с Role Observer: нужен ли ему отдельный тест чтения.'
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: '| S10 Отключённый пользователь | Сессия или токен отключённого пользователя
+    | Запрос отклонён | 401, code `invalid_credentials` |'
+  problem: 'Нет решения, как отключить пользователя и создать токен через API (эндпоинты,
+    тела запросов). Для теста нужны выпуск токена, формат передачи (заголовок Authorization:
+    Bearer?), cookie сессии. Не определены ответы на вход при успехе и поведение при
+    истечении сессии через 12 часов (как проверять время).'
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: '| S1 Первый вход | Заданы `ADMIN_EMAIL`, `ADMIN_PASSWORD`, пользователей
+    нет | Administrator создан и вошёл | N/A |'
+  problem: 'Administrator в каком Project имеет Role (Role привязана к Project, а
+    первый Administrator создаётся до любого Project)? Не решено: глобальный флаг
+    или иная модель. Не определено поведение при пустых или невалидных переменных
+    и при повторном запуске.'
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: '`name` от 1 до 100 символов'
+  problem: 'Нет строк матрицы для границ 0, 101 символов и пробельных имён: код ошибки
+    и статус (422?) не заданы, как и нормализация пробелов и учёт регистра при сравнении
+    (Unicode).'
+  decision: pending
+  decided_by: pending
+dropped_without_quote: []

@@ -14,6 +14,8 @@
 | [doc-publisher](https://github.com/DemonIngvi/doc-publisher) | Публичный | Публикация в Docmost |
 | [docmost-stack](https://github.com/DemonIngvi/docmost-stack) | Публичный | Запуск Docmost |
 | [documentation_docmost](https://github.com/DemonIngvi/documentation_docmost) | Публичный | Пример: проект «Вектор» |
+| rnd-helper | Приватный | Помощник человека в R&D, каркас |
+| sdd-helper | Приватный | Помощник человека в требованиях, каркас |
 
 Каждый репозиторий меняется и выпускает версии независимо.
 
@@ -29,6 +31,10 @@ python doc-kit/tools/kit.py init acme --dir D:/projects --github
 ```
 
 `doc-kit` создаёт `acme-docs`, устанавливает закреплённые версии `BMAD-METHOD`, `doc-architecture` и `doc-gates`. `doc-publisher` и `docmost-stack` работают отдельно от проекта.
+
+После первого Spine навык `doc-arch` раскладывает архитектуру на единицы и ведёт заполнение модели системы: участники, системы, данные, функции, процессы, сервисы, компоненты, хранилища, интеграции и потоки. `check.py` проверяет связи и считает готовность.
+
+Страницы C1, C2, C3, реестры и панель готовности подключаются в `docmost.yaml` через поле `view`.
 
 ## Что вызывает ИИ
 

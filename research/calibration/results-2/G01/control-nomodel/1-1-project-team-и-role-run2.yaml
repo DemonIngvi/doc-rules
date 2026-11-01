@@ -1,0 +1,74 @@
+gate: G01
+target: 1-1-project-team-и-role
+input_hash: f5ee156c55993c28262120990d2dc4e948b9bfb8e9fb5af68498945fb6fb221c
+run_by: run_gate.py sonnet
+author: unknown
+verdict: concerns
+tokens: 6755
+estimate: 5500
+cost_usd: 0.0160562
+not_checked: Один запуск не доказывает полноту, разные запуски находят разное
+findings:
+- level: minor
+  quote: '| S10 Отключённый пользователь | Сессия или токен отключённого пользователя
+    | Запрос отклонён | 401, code `invalid_credentials` |'
+  problem: 'Нет строки/критерия для истёкшей сессии (12 часов): какой код и ответ,
+    как тестировать время (управляемые часы, TTL в Redis), скользящее или фиксированное
+    окно. Автотест невозможен без догадок о времени.'
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: Пользователь без Role в Project не видит его Work Item, API возвращает 404.
+  problem: 'Не определено, как работают списки и поиск: чужие Project скрываются из
+    списка или дают ошибку. Для GET /projects (список) ожидаемый результат неизвестен,
+    пагинация курсорная, но формат не задан.'
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: '| S3, S7, S8 Дубль имени | Имя занято в Program, в том числе параллельным
+    запросом | Project не создан | 409, code `project_name_taken` |'
+  problem: 'Не сказано, как сравнивается имя без учёта регистра (Unicode, обрезка
+    пробелов) и как уникальность работает для Project без Program (`program_id` необязателен).
+    Не определён ожидаемый результат параллельного запроса: какой из двух выигрывает
+    и что проверяет тест.'
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: 'Поля Project: `name` от 1 до 100 символов, `process_id`, `program_id` необязателен.'
+  problem: 'Нет строк матрицы для невалидного имени (пусто, 101 символ, только пробелы)
+    и несуществующего `program_id`: код ошибки и статус не заданы, границы для автотеста
+    неизвестны.'
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: '| S1 Создание Team и назначение Role | Administrator задаёт Team и Role
+    пользователя | Role действует со следующего запроса | N/A |'
+  problem: 'Не определены вход и результат: поля Team, как Team связана с пользователями,
+    что делать при повторном назначении Role (замена или добавление, у пользователя
+    одна Role в Project или несколько), смена или снятие Role, несуществующий пользователь.
+    Нет таблицы ошибок для не-Administrator, создающего Team.'
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: '| S1 Первый вход | Заданы `ADMIN_EMAIL`, `ADMIN_PASSWORD`, пользователей
+    нет | Administrator создан и вошёл | N/A |'
+  problem: Не решено поведение при незаданных или невалидных переменных (формат почты,
+    минимальная длина пароля), политика паролей вообще, и что происходит, если пользователи
+    уже есть. Административная Role в каком Project создаётся у первого Administrator,
+    не сказано (Role выдаётся в Project, а Projects ещё нет).
+  decision: pending
+  decided_by: pending
+- level: minor
+  quote: Given чистый сервер, when выполнен `docker compose up`, then приложение открывается
+    и Administrator может войти.
+  problem: Не указано, что значит «приложение открывается» (адрес, порт, проверка
+    здоровья), откуда берутся ADMIN_EMAIL/ADMIN_PASSWORD в чистом compose и какие
+    службы входят. Автотест требует догадок о URL и данных.
+  decision: pending
+  decided_by: pending
+dropped_without_quote:
+- level: minor
+  quote: Администратор может создавать пользователей, отключать их и выпускать API-токены.
+  problem: 'Для создания пользователей, отключения и выпуска токенов нет ни строк
+    матрицы, ни критериев: нет эндпоинтов, формата ответа, срока жизни и прав токена
+    (какая Role у токена), поведения при дубле почты. Ошибки и результаты неизвестны.'
