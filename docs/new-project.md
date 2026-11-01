@@ -14,6 +14,7 @@
 | [doc-publisher](https://github.com/DemonIngvi/doc-publisher) | Публичный | Публикация в Docmost |
 | [docmost-stack](https://github.com/DemonIngvi/docmost-stack) | Публичный | Запуск Docmost |
 | [documentation_docmost](https://github.com/DemonIngvi/documentation_docmost) | Публичный | Пример: проект «Вектор» |
+| [agent-tasktracker-max](https://github.com/DemonIngvi/agent-tasktracker-max) | Публичный | Рабочий проект: агентная платформа, перенесённая из `agent-architecture` |
 | rnd-helper | Приватный | Помощник человека в R&D, каркас |
 | sdd-helper | Приватный | Помощник человека в требованиях, каркас |
 
