@@ -1,0 +1,33 @@
+G01:
+  target: _bmad-output/implementation-artifacts/1-1-project-team-и-role.md
+  seeds:
+  - id: O1
+    kind: Удалён сценарий неверного пароля из FR-23
+    file: _bmad-output/implementation-artifacts/1-1-project-team-и-role.md
+    old: "| S3 Неверный пароль | Почта есть, пароль неверен | Вход отклонён | 401, code `invalid_credentials` |\n"
+    new: ''
+    hit: 'неверн\w* парол|401'
+  - id: O2
+    kind: Удалён сценарий Observer из FR-2
+    file: _bmad-output/implementation-artifacts/1-1-project-team-и-role.md
+    old: "| S5 Observer меняет | Role Observer меняет Project | Изменение отклонено | 403 |\n"
+    new: ''
+    hit: 'Observer'
+  - id: O3
+    kind: Удалён сценарий дубля имени из FR-1
+    file: _bmad-output/implementation-artifacts/1-1-project-team-и-role.md
+    old: "| S3, S7, S8 Дубль имени | Имя занято в Program, в том числе параллельным запросом | Project не создан | 409, code `project_name_taken` |\n"
+    new: ''
+    hit: '409|дубл|уникальн'
+  - id: O4
+    kind: Удалён сценарий отключённого пользователя из FR-23
+    file: _bmad-output/implementation-artifacts/1-1-project-team-и-role.md
+    old: "| S10 Отключённый пользователь | Сессия или токен отключённого пользователя | Запрос отклонён | 401, code `invalid_credentials` |\n"
+    new: ''
+    hit: 'отключ'
+  - id: O5
+    kind: Код ответа расходится с FR-2
+    file: _bmad-output/implementation-artifacts/1-1-project-team-и-role.md
+    old: '| Project считается чужим, данные скрыты | 404 |'
+    new: '| Project считается чужим, данные скрыты | 403 |'
+    hit: 'чуж\w*.{0,160}40[34]|40[34].{0,160}чуж|Нет Role'

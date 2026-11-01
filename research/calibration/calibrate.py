@@ -25,18 +25,22 @@ import sys
 import yaml
 
 HERE = pathlib.Path(__file__).resolve().parent
-SEEDS = yaml.safe_load((HERE / "seeds.yaml").read_text(encoding="utf-8"))
+SEEDS = {}
 SKIP = shutil.ignore_patterns("_bmad", ".claude", ".doc-kit", "node_modules", "__pycache__")
 CAP = 8
 SAMPLE = 20
 SEED = 42
 GATES = ("G01", "G08", "G11")
+MODEL = ("actors", "processes", "services", "systems", "functions", "components", "data", "stores", "flows", "integrations", "nodes")
 
 
-def copy_example(example, target, seeds):
+def copy_example(example, target, seeds, model=True):
     if target.exists():
         shutil.rmtree(target)
     shutil.copytree(example, target, ignore=SKIP)
+    if not model:
+        for name in MODEL:
+            shutil.rmtree(target / "docs" / "architecture" / name, ignore_errors=True)
     for seed in seeds:
         path = target / seed["file"]
         text = path.read_text(encoding="utf-8")
@@ -47,9 +51,9 @@ def copy_example(example, target, seeds):
 
 def run_series(args):
     plan = SEEDS[args.gate]
-    seeds = plan["seeds"] if args.variant == "seeded" else []
+    seeds = plan["seeds"] if args.variant.startswith("seeded") else []
     work = args.work / f"{args.gate}-{args.variant}"
-    copy_example(args.example, work, seeds)
+    copy_example(args.example, work, seeds, not args.variant.endswith("nomodel"))
     out = args.out / args.gate / args.variant
     out.mkdir(parents=True, exist_ok=True)
     env = {**os.environ, "PYTHONUTF8": "1"}
@@ -77,11 +81,17 @@ def found(run, seed):
 
 def report(out):
     for gate in GATES:
+        for variant in ("seeded", "seeded-nomodel"):
+            report_series(out, gate, variant)
+
+
+def report_series(out, gate, variant):
+    if gate in SEEDS:
         seeds = SEEDS[gate]["seeds"]
-        runs = load_runs(out, gate, "seeded")
+        runs = load_runs(out, gate, variant)
         if not runs:
-            continue
-        print(f"\n## {gate}: запусков {len(runs)}")
+            return
+        print(f"\n## {gate} {variant}: запусков {len(runs)}")
         rows = [[found(run, seed) for seed in seeds] for run in runs]
         recall = [sum(row) / len(seeds) for row in rows]
         pairs = [sum(a or b for a, b in zip(x, y)) / len(seeds) for x, y in itertools.combinations(rows, 2)]
@@ -90,19 +100,19 @@ def report(out):
         print(f"Полнота всех запусков: {sum(any(c) for c in zip(*rows)) / len(seeds):.0%}")
         for index, seed in enumerate(seeds):
             print(f"  {seed['id']} {seed['kind']}: {sum(row[index] for row in rows)} из {len(rows)}")
-        for variant in ("seeded", "control"):
-            part = load_runs(out, gate, variant)
+        for name in (variant, variant.replace("seeded", "control")):
+            part = load_runs(out, gate, name)
             if part:
                 tokens = [r["tokens"] for r in part]
                 capped = sum(len(r["findings"]) >= CAP for r in part)
                 verdicts = ", ".join(sorted(r["verdict"] for r in part))
-                print(f"  {variant}: токены {statistics.mean(tokens):.0f} ({min(tokens)}–{max(tokens)}), потолок {capped} из {len(part)}, вердикты {verdicts}")
+                print(f"  {name}: токены {statistics.mean(tokens):.0f} ({min(tokens)}–{max(tokens)}), потолок {capped} из {len(part)}, вердикты {verdicts}")
 
 
 def sample(out):
     rng = random.Random(SEED)
     result = {}
-    for gate in GATES:
+    for gate in [g for g in GATES if g in SEEDS]:
         seeds = SEEDS[gate]["seeds"]
         pool = []
         for variant in ("control", "seeded"):
@@ -123,15 +133,17 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("command", choices=["check", "run", "report", "sample"])
     parser.add_argument("gate", nargs="?", choices=GATES)
-    parser.add_argument("variant", nargs="?", choices=["control", "seeded"])
+    parser.add_argument("variant", nargs="?", choices=["control", "seeded", "control-nomodel", "seeded-nomodel"])
+    parser.add_argument("--seeds", default="seeds.yaml")
     parser.add_argument("--example", type=pathlib.Path)
     parser.add_argument("--gates", type=pathlib.Path)
     parser.add_argument("--work", type=pathlib.Path)
     parser.add_argument("--out", type=pathlib.Path)
     parser.add_argument("--runs", type=int, default=5)
     args = parser.parse_args()
+    SEEDS.update(yaml.safe_load((HERE / args.seeds).read_text(encoding="utf-8")))
     if args.command == "check":
-        for gate in GATES:
+        for gate in SEEDS:
             copy_example(args.example, args.work / f"check-{gate}", SEEDS[gate]["seeds"])
             print(gate, "дефектов внесено:", len(SEEDS[gate]["seeds"]))
     elif args.command == "run":
